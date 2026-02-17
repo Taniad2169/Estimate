@@ -1,0 +1,601 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Tax Preparation Estimate Calculator</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Roboto, Arial, sans-serif;
+    }
+    
+    body {
+      background: linear-gradient(135deg, #f5f7fa 0%, #e6f2ff 100%);
+      min-height: 100vh;
+      padding: 30px 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    
+    .main-container {
+      max-width: 1000px;
+      width: 100%;
+      background: white;
+      border-radius: 24px;
+      box-shadow: 0 20px 40px rgba(20, 57, 93, 0.15);
+      overflow: hidden;
+      transition: all 0.3s ease;
+    }
+    
+    .header {
+      background: #14395d;
+      padding: 30px 40px;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .header::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      right: -10%;
+      width: 300px;
+      height: 300px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 50%;
+      transform: rotate(20deg);
+    }
+    
+    .header::after {
+      content: '';
+      position: absolute;
+      bottom: -70%;
+      left: -10%;
+      width: 400px;
+      height: 400px;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 50%;
+    }
+    
+    h1 {
+      color: white;
+      font-size: 2.2rem;
+      font-weight: 600;
+      position: relative;
+      z-index: 2;
+      letter-spacing: -0.5px;
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+    }
+    
+    .header p {
+      color: rgba(255, 255, 255, 0.9);
+      margin-top: 8px;
+      font-size: 1rem;
+      position: relative;
+      z-index: 2;
+    }
+    
+    .content {
+      padding: 40px;
+    }
+    
+    .pricing-card {
+      background: linear-gradient(145deg, #f8faff, #e6f2ff);
+      border-radius: 20px;
+      padding: 25px;
+      margin-bottom: 35px;
+      border: 1px solid rgba(20, 57, 93, 0.1);
+      box-shadow: 0 8px 20px rgba(20, 57, 93, 0.08);
+    }
+    
+    .pricing-card h2 {
+      color: #14395d;
+      font-size: 1.5rem;
+      margin-bottom: 20px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    
+    .pricing-card h2::before {
+      content: '💰';
+      font-size: 1.8rem;
+    }
+    
+    .pricing-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 15px;
+    }
+    
+    .pricing-item {
+      background: white;
+      padding: 15px;
+      border-radius: 12px;
+      border-left: 4px solid #14395d;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
+      transition: transform 0.2s ease;
+    }
+    
+    .pricing-item:hover {
+      transform: translateX(5px);
+      box-shadow: 0 4px 12px rgba(20, 57, 93, 0.1);
+    }
+    
+    .pricing-item p {
+      margin: 0;
+      color: #2c3e50;
+      font-size: 0.95rem;
+    }
+    
+    .pricing-item span {
+      font-weight: 700;
+      color: #14395d;
+      font-size: 1.1rem;
+      display: block;
+      margin-top: 5px;
+    }
+    
+    .section {
+      background: white;
+      border-radius: 16px;
+      padding: 25px;
+      margin-bottom: 25px;
+      border: 1px solid rgba(20, 57, 93, 0.1);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.02);
+      transition: all 0.3s ease;
+    }
+    
+    .section:hover {
+      border-color: #14395d;
+      box-shadow: 0 8px 24px rgba(20, 57, 93, 0.12);
+    }
+    
+    .section h2 {
+      color: #14395d;
+      font-size: 1.3rem;
+      margin-bottom: 20px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    .section h2::before {
+      font-size: 1.4rem;
+    }
+    
+    .section:nth-of-type(1) h2::before { content: '📋'; }
+    .section:nth-of-type(2) h2::before { content: '👤'; }
+    .section:nth-of-type(3) h2::before { content: '📊'; }
+    .section:nth-of-type(4) h2::before { content: '👨‍👩‍👧'; }
+    .section:nth-of-type(5) h2::before { content: '✨'; }
+    
+    label {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-top: 15px;
+      padding: 12px 15px;
+      background: #f8faff;
+      border-radius: 12px;
+      border: 1px solid transparent;
+      transition: all 0.2s ease;
+      cursor: pointer;
+      color: #2c3e50;
+      font-weight: 500;
+    }
+    
+    label:hover {
+      background: #e6f2ff;
+      border-color: #14395d;
+      transform: translateX(5px);
+    }
+    
+    input[type="radio"], input[type="checkbox"] {
+      width: 18px;
+      height: 18px;
+      accent-color: #14395d;
+      cursor: pointer;
+    }
+    
+    input[type="number"], select {
+      padding: 12px 15px;
+      border: 2px solid #e0e7f0;
+      border-radius: 12px;
+      font-size: 1rem;
+      width: 100%;
+      max-width: 200px;
+      margin-left: auto;
+      transition: all 0.2s ease;
+      background: white;
+      color: #2c3e50;
+    }
+    
+    input[type="number"]:focus, select:focus {
+      border-color: #14395d;
+      outline: none;
+      box-shadow: 0 0 0 3px rgba(20, 57, 93, 0.1);
+    }
+    
+    select {
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2314395d' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 15px center;
+      appearance: none;
+      cursor: pointer;
+    }
+    
+    .number-input-wrapper {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      width: 100%;
+    }
+    
+    button {
+      background: #14395d;
+      color: white;
+      border: none;
+      padding: 18px 35px;
+      font-size: 1.2rem;
+      font-weight: 600;
+      border-radius: 50px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      width: 100%;
+      max-width: 300px;
+      display: block;
+      margin: 30px auto 20px;
+      box-shadow: 0 8px 20px rgba(20, 57, 93, 0.3);
+      letter-spacing: 0.5px;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    button::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+      transition: left 0.5s ease;
+    }
+    
+    button:hover {
+      background: #1a4a7a;
+      transform: translateY(-3px);
+      box-shadow: 0 15px 30px rgba(20, 57, 93, 0.4);
+    }
+    
+    button:hover::before {
+      left: 100%;
+    }
+    
+    button:active {
+      transform: translateY(0);
+    }
+    
+    .estimate-box {
+      background: linear-gradient(145deg, #14395d, #1a4a7a);
+      color: white;
+      padding: 30px;
+      border-radius: 20px;
+      font-size: 2rem;
+      font-weight: 700;
+      text-align: center;
+      margin-top: 30px;
+      box-shadow: 0 20px 30px rgba(20, 57, 93, 0.3);
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .estimate-box::before {
+      content: '💰';
+      position: absolute;
+      left: 20px;
+      bottom: 20px;
+      font-size: 4rem;
+      opacity: 0.2;
+      transform: rotate(-15deg);
+    }
+    
+    .estimate-box::after {
+      content: '💵';
+      position: absolute;
+      right: 20px;
+      top: 20px;
+      font-size: 3rem;
+      opacity: 0.2;
+      transform: rotate(15deg);
+    }
+    
+    .estimate-box span {
+      display: inline-block;
+      font-size: 3.5rem;
+      margin-left: 10px;
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+    }
+    
+    .footnote {
+      text-align: center;
+      color: #666;
+      font-size: 0.9rem;
+      margin-top: 20px;
+      padding: 15px;
+      background: rgba(230, 242, 255, 0.5);
+      border-radius: 12px;
+    }
+    
+    .checkbox-group {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 10px;
+    }
+    
+    @media (max-width: 768px) {
+      .content {
+        padding: 25px;
+      }
+      
+      h1 {
+        font-size: 1.8rem;
+      }
+      
+      .pricing-grid {
+        grid-template-columns: 1fr;
+      }
+      
+      .estimate-box {
+        font-size: 1.5rem;
+        padding: 25px;
+      }
+      
+      .estimate-box span {
+        font-size: 2.5rem;
+      }
+      
+      button {
+        max-width: 100%;
+      }
+      
+      input[type="number"], select {
+        max-width: 150px;
+      }
+    }
+    
+    @media (max-width: 480px) {
+      .header {
+        padding: 25px;
+      }
+      
+      .content {
+        padding: 20px;
+      }
+      
+      .section {
+        padding: 20px;
+      }
+      
+      label {
+        flex-wrap: wrap;
+      }
+      
+      input[type="number"], select {
+        max-width: 100%;
+        margin-left: 0;
+        margin-top: 10px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<div class="main-container">
+  <div class="header">
+    <h1>Tax Preparation Estimate</h1>
+    <p>Get an instant estimate based on your return complexity</p>
+  </div>
+  
+  <div class="content">
+    <!-- ===== PRICING STRUCTURE DISPLAY ===== -->
+    <div class="pricing-card">
+      <h2>Pricing Structure</h2>
+      <div class="pricing-grid">
+        <div class="pricing-item">
+          <p>Individual Return Base</p>
+          <span>$150</span>
+        </div>
+        <div class="pricing-item">
+          <p>Business Return Base</p>
+          <span>$400</span>
+        </div>
+        <div class="pricing-item">
+          <p>Head of Household</p>
+          <span>$40</span>
+        </div>
+        <div class="pricing-item">
+          <p>Married Filing Jointly</p>
+          <span>$60</span>
+        </div>
+        <div class="pricing-item">
+          <p>Married Filing Separately</p>
+          <span>$50</span>
+        </div>
+        <div class="pricing-item">
+          <p>Qualifying Widow(er)</p>
+          <span>$50</span>
+        </div>
+        <div class="pricing-item">
+          <p>Additional W-2</p>
+          <span>$25</span>
+        </div>
+        <div class="pricing-item">
+          <p>Schedule C (Self-Employed)</p>
+          <span>$200</span>
+        </div>
+        <div class="pricing-item">
+          <p>Rental Property</p>
+          <span>$175</span>
+        </div>
+        <div class="pricing-item">
+          <p>Investments (Stocks/Crypto)</p>
+          <span>$125</span>
+        </div>
+        <div class="pricing-item">
+          <p>Per Dependent</p>
+          <span>$50</span>
+        </div>
+        <div class="pricing-item">
+          <p>Amended Return</p>
+          <span>$150</span>
+        </div>
+        <div class="pricing-item">
+          <p>Prior Year Return</p>
+          <span>$125</span>
+        </div>
+      </div>
+    </div>
+
+    <form id="taxForm">
+      <div class="section">
+        <h2>Select Return Type</h2>
+        <label>
+          <input type="radio" name="returnType" value="personal" checked>
+          Individual Tax Return
+        </label>
+        <label>
+          <input type="radio" name="returnType" value="business">
+          Business Tax Return
+        </label>
+      </div>
+
+      <div class="section">
+        <h2>Filing Status</h2>
+        <select id="filingStatus">
+          <option value="0">Single</option>
+          <option value="HOH">Head of Household</option>
+          <option value="MFJ">Married Filing Jointly</option>
+          <option value="MFS">Married Filing Separately</option>
+          <option value="WIDOW">Qualifying Widow(er)</option>
+        </select>
+      </div>
+
+      <div class="section">
+        <h2>Income Complexity</h2>
+        <label>
+          Number of W-2 Forms:
+          <input type="number" id="w2Count" value="1" min="0">
+        </label>
+
+        <div class="checkbox-group">
+          <label>
+            <input type="checkbox" id="scheduleC"> Self-Employed (Schedule C)
+          </label>
+          <label>
+            <input type="checkbox" id="rental"> Rental Property
+          </label>
+          <label>
+            <input type="checkbox" id="investment"> Stocks / Crypto / Investments
+          </label>
+        </div>
+      </div>
+
+      <div class="section">
+        <h2>Dependents</h2>
+        <label>
+          Number of Dependents:
+          <input type="number" id="dependents" value="0" min="0">
+        </label>
+      </div>
+
+      <div class="section">
+        <h2>Special Situations</h2>
+        <label>
+          <input type="checkbox" id="amended"> Amended Return
+        </label>
+        <label>
+          <input type="checkbox" id="priorYear"> Prior Year Return
+        </label>
+      </div>
+
+      <button type="button" onclick="calculateEstimate()">Calculate Estimate</button>
+
+      <div class="estimate-box">
+        Estimated Fee: $<span id="estimate">0</span>
+      </div>
+
+      <div class="footnote">
+        *Estimate based on return complexity. Final pricing confirmed after full document review.
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+  // ====== PLACEHOLDER PRICING ======
+  const BASE_PERSONAL = 150;
+  const BASE_BUSINESS = 400;
+  const HOH_FEE = 40;
+  const MFJ_FEE = 60;
+  const MFS_FEE = 50;
+  const WIDOW_FEE = 50;
+  const ADDITIONAL_W2 = 25;
+  const SCHEDULE_C = 200;
+  const RENTAL = 175;
+  const INVESTMENT = 125;
+  const ADD_DEPENDENT = 50;
+  const AMENDED = 150;
+  const PRIOR_YEAR = 125;
+
+  function calculateEstimate() {
+    let total = 0;
+    let returnType = document.querySelector('input[name="returnType"]:checked').value;
+
+    if (returnType === "personal") {
+      total += BASE_PERSONAL;
+    } else {
+      total += BASE_BUSINESS;
+    }
+
+    // Filing Status Logic
+    let status = document.getElementById("filingStatus").value;
+    if (status === "HOH") total += HOH_FEE;
+    if (status === "MFJ") total += MFJ_FEE;
+    if (status === "MFS") total += MFS_FEE;
+    if (status === "WIDOW") total += WIDOW_FEE;
+
+    // W2 Logic
+    let w2Count = parseInt(document.getElementById("w2Count").value) || 0;
+    if (w2Count > 1) {
+      total += (w2Count - 1) * ADDITIONAL_W2;
+    }
+
+    if (document.getElementById("scheduleC").checked) total += SCHEDULE_C;
+    if (document.getElementById("rental").checked) total += RENTAL;
+    if (document.getElementById("investment").checked) total += INVESTMENT;
+
+    let dependents = parseInt(document.getElementById("dependents").value) || 0;
+    total += dependents * ADD_DEPENDENT;
+
+    if (document.getElementById("amended").checked) total += AMENDED;
+    if (document.getElementById("priorYear").checked) total += PRIOR_YEAR;
+
+    document.getElementById("estimate").innerText = total;
+    
+    // Add animation effect
+    const estimateBox = document.querySelector('.estimate-box');
+    estimateBox.style.transform = 'scale(1.02)';
+    setTimeout(() => {
+      estimateBox.style.transform = 'scale(1)';
+    }, 200);
+  }
+</script>
+
+</body>
+</html>
