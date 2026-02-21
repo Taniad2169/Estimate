@@ -173,6 +173,7 @@
     .section:nth-of-type(3) h2::before { content: '📊'; }
     .section:nth-of-type(4) h2::before { content: '👨‍👩‍👧'; }
     .section:nth-of-type(5) h2::before { content: '✨'; }
+    .section:nth-of-type(6) h2::before { content: '🏢'; } /* extra section if needed */
     
     label {
       display: flex;
@@ -337,6 +338,57 @@
       grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
       gap: 10px;
     }
+
+    /* style for occupation chips */
+    .occupation-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 15px;
+      margin: 15px 0 10px;
+    }
+    .occupation-chip {
+      background: #e6f2ff;
+      border-radius: 40px;
+      padding: 10px 20px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      border: 1px solid #b8d1f0;
+      cursor: pointer;
+      transition: all 0.2s;
+      user-select: none;
+    }
+    .occupation-chip:hover {
+      background: #cfe3ff;
+      border-color: #14395d;
+      transform: scale(1.02);
+    }
+    .occupation-chip input {
+      width: 18px;
+      height: 18px;
+      accent-color: #14395d;
+      margin: 0;
+    }
+    .occupation-chip span {
+      font-weight: 500;
+      color: #14395d;
+    }
+
+    .radio-group-horizontal {
+      display: flex;
+      gap: 25px;
+      margin-left: auto;
+      align-items: center;
+    }
+    .radio-group-horizontal label {
+      all: unset;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      cursor: pointer;
+      background: transparent;
+      padding: 0;
+    }
     
     @media (max-width: 768px) {
       .content {
@@ -400,6 +452,8 @@
   <div class="header">
     <h1>Tax Preparation Estimate</h1>
     <p>Get an instant estimate based on your return complexity</p>
+    <!-- SMS number updated to 4156189200 for testing -->
+    <p style="font-size:0.9rem; margin-top:12px; opacity:0.8;">📱 SMS support: 415-618-9200 (testing)</p>
   </div>
   
   <div class="content">
@@ -436,7 +490,7 @@
           <span>$25</span>
         </div>
         <div class="pricing-item">
-          <p>Schedule C (Self-Employed)</p>
+          <p>Business Owner</p>
           <span>$200</span>
         </div>
         <div class="pricing-item">
@@ -486,16 +540,68 @@
         </select>
       </div>
 
+      <!-- INCOME COMPLEXITY section with all new fields -->
       <div class="section">
         <h2>Income Complexity</h2>
+        
+        <!-- W2 (kept from original) -->
         <label>
           Number of W-2 Forms:
           <input type="number" id="w2Count" value="1" min="0">
         </label>
 
+        <!-- New: Occupation checkboxes (Uber/Lyft/taxi, electrician, handiman, mechanic, construction worker) -->
+        <div style="margin: 20px 0 10px; font-weight: 600; color:#14395d;">Select your occupation (if any):</div>
+        <div class="occupation-grid">
+          <label class="occupation-chip">
+            <input type="checkbox" id="occUber" value="uber"> <span>Uber/Lyft/taxi</span>
+          </label>
+          <label class="occupation-chip">
+            <input type="checkbox" id="occElectrician" value="electrician"> <span>Electrician</span>
+          </label>
+          <label class="occupation-chip">
+            <input type="checkbox" id="occHandyman" value="handyman"> <span>Handyman</span>
+          </label>
+          <label class="occupation-chip">
+            <input type="checkbox" id="occMechanic" value="mechanic"> <span>Mechanic</span>
+          </label>
+          <label class="occupation-chip">
+            <input type="checkbox" id="occConstruction" value="construction"> <span>Construction worker</span>
+          </label>
+        </div>
+
+        <!-- New: Do you have children under 19? -->
+        <label style="justify-content: space-between; flex-wrap: wrap;">
+          <span>Do you have children under 19 years old?</span>
+          <span class="radio-group-horizontal">
+            <label><input type="radio" name="kidsUnder19Main" value="yes"> Yes</label>
+            <label><input type="radio" name="kidsUnder19Main" value="no" checked> No</label>
+          </span>
+        </label>
+
+        <!-- New: What is your combined income? (entry box) -->
+        <label style="flex-wrap: wrap;">
+          <span style="min-width: 200px;">What is your combined income?</span>
+          <div style="display: flex; align-items: center; gap: 5px; margin-left: auto;">
+            <span>$</span>
+            <input type="number" id="combinedIncomeMain" value="50000" step="0.01" min="0" style="max-width: 150px;">
+          </div>
+        </label>
+
+        <!-- New: Is your combined income over $30,000? -->
+        <label style="justify-content: space-between; flex-wrap: wrap;">
+          <span>Is your combined income over $30,000?</span>
+          <span class="radio-group-horizontal">
+            <label><input type="radio" name="incomeOver30k" value="yes"> Yes</label>
+            <label><input type="radio" name="incomeOver30k" value="no"> No</label>
+          </span>
+        </label>
+
+        <!-- Keep original checkboxes (Business Owner, Rental, Investments) but placed after new fields -->
+        <div style="margin: 25px 0 10px; font-weight: 600; color:#14395d;">Additional income sources:</div>
         <div class="checkbox-group">
           <label>
-            <input type="checkbox" id="scheduleC"> Self-Employed (Schedule C)
+            <input type="checkbox" id="scheduleC"> Business Owner
           </label>
           <label>
             <input type="checkbox" id="rental"> Rental Property
@@ -506,14 +612,16 @@
         </div>
       </div>
 
+      <!-- Dependents section (original, kept but note we already asked kids under 19) -->
       <div class="section">
-        <h2>Dependents</h2>
+        <h2>Dependents (additional)</h2>
         <label>
-          Number of Dependents:
+          Number of Dependents (if not counted above):
           <input type="number" id="dependents" value="0" min="0">
         </label>
       </div>
 
+      <!-- Special situations (original) -->
       <div class="section">
         <h2>Special Situations</h2>
         <label>
@@ -532,13 +640,14 @@
 
       <div class="footnote">
         *Estimate based on return complexity. Final pricing confirmed after full document review.
+        <br>📱 SMS test number: 415-618-9200
       </div>
     </form>
   </div>
 </div>
 
 <script>
-  // ====== PLACEHOLDER PRICING ======
+  // ====== PRICING CONSTANTS ======
   const BASE_PERSONAL = 150;
   const BASE_BUSINESS = 400;
   const HOH_FEE = 40;
@@ -546,7 +655,7 @@
   const MFS_FEE = 50;
   const WIDOW_FEE = 50;
   const ADDITIONAL_W2 = 25;
-  const SCHEDULE_C = 200;
+  const BUSINESS_OWNER = 200;
   const RENTAL = 175;
   const INVESTMENT = 125;
   const ADD_DEPENDENT = 50;
@@ -576,15 +685,23 @@
       total += (w2Count - 1) * ADDITIONAL_W2;
     }
 
-    if (document.getElementById("scheduleC").checked) total += SCHEDULE_C;
+    // Occupation checkboxes (just informational, no price impact unless we decide later)
+    // You can later add logic if needed. For now they are captured but don't change fee.
+
+    // Business Owner, Rental, Investments
+    if (document.getElementById("scheduleC").checked) total += BUSINESS_OWNER;
     if (document.getElementById("rental").checked) total += RENTAL;
     if (document.getElementById("investment").checked) total += INVESTMENT;
 
+    // Dependents from original field
     let dependents = parseInt(document.getElementById("dependents").value) || 0;
     total += dependents * ADD_DEPENDENT;
 
     if (document.getElementById("amended").checked) total += AMENDED;
     if (document.getElementById("priorYear").checked) total += PRIOR_YEAR;
+
+    // The new fields (kids under 19, combined income, income over/under 30k) are for data collection
+    // and do not currently affect the estimate, per request.
 
     document.getElementById("estimate").innerText = total;
     
@@ -597,5 +714,6 @@
   }
 </script>
 
+<!-- phone number 4156189200 appears in header and footnote -->
 </body>
 </html>
